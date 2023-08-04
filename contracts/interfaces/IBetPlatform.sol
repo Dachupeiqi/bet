@@ -7,19 +7,19 @@ import { RoomData, BetData, AccountData, RoomDataParam } from '../lib/Struct.sol
 
 interface IBetPlatform {
 
-    function createBet(
+    function createRoom(
         RoomDataParam calldata roomDataParam,
         bytes calldata betData
     ) external;
 
-    function bet(uint256 id, bytes calldata betData) external;
+    function bet(uint256 roomId, bytes calldata betData) external;
 
 
-    function getBetIds() external view returns (uint256[] memory);
+    function getRoomIds() external view returns (uint256[] memory);
 
-    function getBetDatas(uint id) external view returns (BetData[] memory);
+    function getBetDatas(uint roomId) external view returns (BetData[] memory);
 
-    function getRoomData(uint id) external view returns (RoomData memory);
+    function getRoomData(uint roomId) external view returns (RoomData memory);
 
     function getAccountData(
         address account

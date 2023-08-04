@@ -19,7 +19,7 @@ async function main() {
   myErc20 = await MyErc20.deploy();
   await myErc20.deployed()
 
-  console.log("id:",await betPlatform.getBetIds())
+  console.log("id:",await betPlatform.getRoomIds())
 
   console.log("betPlatform deploy address:",betPlatform.address);
 

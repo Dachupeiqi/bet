@@ -27,3 +27,4 @@ struct BetData {
     bytes data;
     uint256[] decodeBetData;
 }
+
