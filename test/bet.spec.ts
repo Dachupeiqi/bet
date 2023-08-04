@@ -76,20 +76,31 @@ describe(`test bet`, async function () {
     let betEncryptedData = crypto.publicEncrypt(publicKey, Buffer.from(JSON.stringify(betData)));
     let betEncryptedData1 = crypto.publicEncrypt(publicKey, Buffer.from(JSON.stringify(betData1)));
 
+    console.log("\n==== 查看策略数据转 字节数组的  数据形式 ====");
     console.log("betEncryptedData1",betEncryptedData);
     console.log("betEncryptedData2",betEncryptedData1);
     
-    console.log("========");
-    
+    console.log("\n==== 查看存储策略 ====");
     let storeCustomStrategy = await betPlatform.connect(betAccount).storeCustomStrategy(betEncryptedData);
+    let storeCustomStrategy2 = await betPlatform.connect(betAccount).storeCustomStrategy(betEncryptedData1);
     let storeCustomStrategy1 = await betPlatform.connect(betAccount1).storeCustomStrategy(betEncryptedData1);
-
     console.log("storeCustomStrategy",storeCustomStrategy);
     console.log("storeCustomStrategy",storeCustomStrategy1);
-    
-    let getCustomStrategy = await betPlatform.connect(betAccount).getCustomStrategy(0);
-    let getCustomStrategy1 = await betPlatform.connect(betAccount1).getCustomStrategy(0);
 
+    console.log("\n==== 查看存储策略的数量 ====");
+    let getCustomStrategyCount = await betPlatform.connect(betAccount).getCustomStrategyCount();
+    console.log("getCustomStrategyCount",getCustomStrategyCount);
+
+
+    console.log("\n==== 查看该帐户的所有策略 ====");
+    let getAllCustomStrategies = await betPlatform.connect(betAccount).getAllCustomStrategies();
+    let getAllCustomStrategies1 = await betPlatform.connect(betAccount1).getAllCustomStrategies();
+    console.log("getAllCustomStrategies",getAllCustomStrategies);
+    console.log("getAllCustomStrategies1",getAllCustomStrategies1);
+    
+    console.log("\n==== 查看该帐户的制定策略id 的 策略 信息 ====");
+    let getCustomStrategy =  await betPlatform.connect(betAccount).getCustomStrategy(1);
+    let getCustomStrategy1 = await betPlatform.connect(betAccount1).getCustomStrategy(1);
     console.log("getCustomStrategy",getCustomStrategy);
     console.log("getCustomStrategy1",getCustomStrategy1);
 
@@ -152,7 +163,7 @@ describe(`test bet`, async function () {
     const betAccountBalance = await betFundPool.connect(betAccount).getUserTokenBalance(betAccount.address, myErc20.address)
     const betAccount1Balance = await betFundPool.connect(betAccount1).getUserTokenBalance(betAccount1.address, myErc20.address)
 
-    console.log("==-==资金池=====");
+    console.log("\n==-==资金池=====");
     console.log("bet account balance:", betAccountBalance)
     console.log("bet account 1 balance:", betAccount1Balance)
 
@@ -167,7 +178,7 @@ describe(`test bet`, async function () {
     console.log("bet account balance:", await myErc20.balanceOf(betAccount.address))
     console.log("bet account1 balance:", await myErc20.balanceOf(betAccount1.address))
 
-    console.log("========资金流水=======");
+    console.log("\n========资金流水=======");
     
     const getUser1TokenFundFlowRecords = await betFundPool.connect(betAccount).getUserTokenFundFlowRecords(betAccount.address)
     const getUser2TokenFundFlowRecords = await betFundPool.connect(betAccount1).getUserTokenFundFlowRecords(betAccount1.address)

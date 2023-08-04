@@ -35,11 +35,12 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
 
     // 存储自定义策略数据结构
      struct CustomStrategy {
+        uint256 strategyId; // 策略id
         address creator; // 策略创建者的地址
         bytes data;      // 策略数据
     }
-      // 使用数组来存储自定义策略
-    CustomStrategy[] private customStrategies;
+    //   // 使用数组来存储自定义策略
+    // CustomStrategy[] private customStrategies;
 
      // 存储每个房间的数据
     mapping(uint256 => RoomData) private roomDatas;
@@ -49,6 +50,12 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
 
     // 存储每个用户的账户数据
     mapping(address => AccountData) private accountData;
+
+    // 存储每个用户的自定义策略数据
+    mapping(address => CustomStrategy[]) private customStrategies;
+
+    // 存储每个用户拥有的自定义策略数量
+    mapping(address => uint256) private customStrategyCounts;
 
     // 定义事件，用于日志记录、
 
@@ -72,9 +79,6 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
 
     // 当存储自定义策略时触发
     event CustomStrategyStored(uint256 indexed strategyId, address indexed creator);
-
-    // 当查看自定义策略时触发
-    event CustomStrategyViewed(address indexed owner, uint256 strategyId);
 
 
     // 定义错误类型，用于异常处理
@@ -396,24 +400,59 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
         return roomIds.length();
     }
 
-     // 存储自定义策略
-    function storeCustomStrategy(bytes calldata betData) external  {
-        customStrategies.push(CustomStrategy({
+    
+    /**
+    * @notice 存储自定义策略。
+    *
+    * @param betData 要存储的策略数据。
+    */
+    function storeCustomStrategy(bytes calldata betData) external {
+           // 获取当前用户已有的自定义策略数量 + 1，作为新策略的ID
+        uint256 strategyId = customStrategyCounts[msg.sender] + 1;
+        // 将新的自定义策略添加到用户的策略数组中
+        customStrategies[msg.sender].push(CustomStrategy({
+            strategyId: strategyId,
             creator: msg.sender,
             data: betData
         }));
-        emit CustomStrategyStored(customStrategies.length - 1, msg.sender);
+        // 增加用户拥有的自定义策略数量
+        customStrategyCounts[msg.sender]++;
+         // 触发自定义策略存储事件
+        emit CustomStrategyStored(strategyId, msg.sender);
     }
     
-      // 获取自定义策略数量
+    /**
+    * @return 用户策略数量。
+    */
     function getCustomStrategyCount() external view returns (uint256) {
-        return customStrategies.length; 
+        return customStrategyCounts[msg.sender];
     }
-    
-     // 根据策略ID获取自定义策略
-     function getCustomStrategy(uint256 strategyId) external view returns (address, bytes memory) { // Change uint256[] to bytes
-        require(strategyId < customStrategies.length, "Invalid strategy ID");
-        CustomStrategy storage strategy = customStrategies[strategyId];
+
+    /**
+    * @notice 根据策略ID获取自定义策略。
+    *
+    * @param strategyId 策略ID。
+    * @return 策略创建者地址和策略数据。
+    */
+    function getCustomStrategy(uint256 strategyId) external view returns (address, bytes memory) {
+        // 确保策略ID在有效范围内
+        require(strategyId > 0 && strategyId <= customStrategyCounts[msg.sender], "Invalid strategy ID");
+        // 获取指定策略ID的自定义策略数据
+        CustomStrategy memory strategy = customStrategies[msg.sender][strategyId - 1 ];
+         // 返回策略创建者地址和策略数据
         return (strategy.creator, strategy.data);
     }
+
+    
+    /**
+    * @notice 获取指定用户所有自定义策略的信息。
+    *
+    * @return 用户的自定义策略数组。
+    */
+    function getAllCustomStrategies() external view returns (CustomStrategy[] memory) {
+         // 返回当前用户拥有的所有自定义策略数据
+        return customStrategies[msg.sender];
+    }
+
+    
 }
