@@ -14,3 +14,11 @@ contract MyErc20 is ERC20 {
         _burn(account, amount);
     }
 }
+
+
+
+
+
+
+
+

@@ -85,8 +85,6 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
     error IncorrectPayment(uint256 msgValue, uint256 betPrice);
     error NotActive(uint256 currentTimestamp, uint256 startTimestamp, uint256 endTimestamp);
 
-  
-
      // 构造函数，在合约部署时被调用
     constructor() {
          // 创建一个新的投注基金池合约，并将其设置为不可变
