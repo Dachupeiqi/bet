@@ -1,51 +1,42 @@
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
+import "@openzeppelin/hardhat-upgrades";
+//在配置文件中引用
+require('dotenv').config()
 
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-etherscan";
-import "@typechain/hardhat";
-
-import dotenv from "dotenv";
-dotenv.config()
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-const PRIVATE_KEY =process.env.privateKey;
-const ethapiKey = process.env.ethapikey;
-
-const config = {
-  solidity: {
-    compilers: [
-      {
-        version: "0.8.19",
-        settings: {
-          viaIR: false,
+let INFURA_KEY = process.env.INFURA_KEY || ''
+let PRIVATE_KEY = process.env.PRIVATE_KEY || ''
+let ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ''
+let ALCHEMY_KEY = process.env.ALCHEMY_KEY || ''
+const config: HardhatUserConfig = {
+    // 配置编译器版本
+    solidity: {
+      version: "0.8.9",
+      settings: {
           optimizer: {
-            enabled: true,
-            runs: 100,
-          },
-          metadata: {
-            bytecodeHash: "none",
-          },
-        },
-      },
-    ],
+              enabled: true,
+              runs: 200
+          }
+      }
   },
+
   networks: {
     hardhat: {
-      blockGasLimit: 30_000_000,
-      throwOnCallFailures: false,
-      allowUnlimitedContractSize: true,
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/076d9837dcba4214a96e75779e9eed85`,
-      accounts: [PRIVATE_KEY] 
+        url: `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+        accounts: [PRIVATE_KEY]
     },
+    // kovan: {
+    //     url: `https://kovan.infura.io/v3/${INFURA_KEY}`,
+    //     accounts: [PRIVATE_KEY]
+    // }
   },
+  // 配置自动化verify相关
   etherscan: {
-    apiKey: ethapiKey,
-  },
-  mocha: {
-    timeout: 100000000
+    apiKey: {
+      goerli:ETHERSCAN_API_KEY
+    }
   }
 };
 

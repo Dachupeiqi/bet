@@ -11,7 +11,7 @@ struct RoomData {
     address betLoses;
 }
 
-struct RoomDataParam {
+struct CreatRoomParam {
     uint256 startTime;
     uint256 endTime;
     uint256 betPrice;

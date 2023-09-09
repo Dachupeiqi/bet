@@ -60,7 +60,7 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
     // 定义事件，用于日志记录、
 
     // 用于记录当创建一个新的投注房间时的信息
-    event RoomCreated(uint256 roomId, RoomDataParam RoomDataParam);
+    event RoomCreated(uint256 roomId, CreatRoomParam creatRoomParam);
 
     // 当有人在投注房间进行投注时，这个事件会被触发
     event Bet(uint256 roomId, address account);
@@ -96,11 +96,11 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
      /**
      * @notice 创建一个新的投注房间。
      *
-     * @param roomDataParam 房间参数。
+     * @param createRoomParam 房间参数。
      * @param betData 参与的策略
      */
     function createRoom(
-        RoomDataParam calldata roomDataParam,
+        CreatRoomParam calldata createRoomParam,
         bytes calldata betData
     ) external override noDelegateCall {
         roomId = roomId.add(1);
@@ -110,10 +110,10 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
 
           // 初始化房间数据
         roomDatas[roomId] = RoomData({
-            startTime: roomDataParam.startTime,
-            endTime: roomDataParam.endTime,
-            betPrice: roomDataParam.betPrice,
-            betToken: roomDataParam.betToken,
+            startTime: createRoomParam.startTime,
+            endTime: createRoomParam.endTime,
+            betPrice: createRoomParam.betPrice,
+            betToken: createRoomParam.betToken,
             status: 0,          // 未结算
             betWin: address(0),
             betLoses: address(0)
@@ -123,7 +123,7 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
         bet(roomId, betData);
 
         // 触发 RoomCreated 事件，记录房间创建的日志
-        emit RoomCreated(roomId, roomDataParam);
+        emit RoomCreated(roomId,createRoomParam );
     }
 
     /**
@@ -180,7 +180,7 @@ contract BetPlatform is IBetPlatform, NoDelegateCall, Ownable, ReentrancyGuard {
         RoomData storage roomData = roomDatas[roomId];
 
         // 检查是否有两个投注帐户
-        if (betDatas[roomId].length == 2) {
+        if ( [roomId].length == 2) {
             address bet0Account = betDatas[roomId][0].account;
             address bet1Account = betDatas[roomId][1].account;
 

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import { RoomData, BetData, AccountData, RoomDataParam } from '../lib/Struct.sol';
+import { RoomData, BetData, AccountData, CreatRoomParam } from '../lib/Struct.sol';
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
 interface IBetPlatform {
 
     function createRoom(
-        RoomDataParam calldata roomDataParam,
+        CreatRoomParam calldata creatRoomParam,
         bytes calldata betData
     ) external;
 
